@@ -1,3 +1,4 @@
+//
 function computerPlay() {
     //randomly return either rock or paper or scisors
     // use console.log to make sure the function is working
@@ -8,28 +9,24 @@ function computerPlay() {
     return choices[choice];
 }
 
-// console.log(computerPlay()); testing the computerPlay function
-
-
-/*
-function that play single round of the game
-input: takes to inputs the playerselection and computerSelection
-output: a string that declares the winner of the round:
-    example: "You Lose! Paper beats Rock"
-
-    make your function's playerSelection parameter case-insensitive
-    so users can input rock ROCK rocK or any other variation
-
-    return the output not just console.log()
- */
-
+//
  function playRound(playerSelection,computerSelection){
     //ignore usercase by putting to lower case
     let playersMove = playerSelection.toLowerCase();
 
-    // check values of player and pc
+    //for spacing the output of the rounds
+    console.log();
+
+    //show the round number and increment it by one
+    round++;
+    console.log(`round ${round}`)
+    //add decoration for output
+    console.log('-------------------------------');
+    // outputs the players and computers moves
     console.log(`the player's move is ${playersMove}`);
     console.log(`the computer's move is ${computerSelection}`);
+    // add spacing for output
+    console.log();
 
     /*
     win and lose conditions
@@ -43,6 +40,14 @@ output: a string that declares the winner of the round:
         scissors > paper
         scissors < rock
      */
+
+    //call function to get the result of the round
+    return roundResult(playersMove, computerSelection);
+ }
+
+//
+ function roundResult(playersMove, computerSelection){
+    // check the result and return it
     if(playersMove == computerSelection){
         return "tie"
     } else if (playersMove == 'paper' && computerSelection == 'rock') {
@@ -58,31 +63,61 @@ output: a string that declares the winner of the round:
     } else if (playersMove == 'scissors' && computerSelection == 'rock'){
         return "You lose! rock crushes Scissors";
     }
+ }
+
+ // play round x number of times
+ function playXNumberRounds(numberOfRounds){
+    //
+    for(let i = 0; i < numberOfRounds; i++){
+        //console.log(i); check number of itterations
+        result = playRound(prompt(),computerPlay());
+        // display the current rounds result
+        console.log(`The result of round ${round}:`);
+        console.log('-------------------------------');
+        console.log(result);
+        console.log();
+
+        //scoring:
+        currentRoundsScore(result);
+
+        //end of round # i    
+    }
 
  }
 
-
-function game(){
-    let playerScore = 0;
-    let computerScore = 0;
-    let result;
-    // play 5 rounds and keep track of the score
-    for(let i = 0; i < 5; i++){
-        //console.log(i); check number of itterations
-        result = playRound(prompt(),computerPlay());
-        console.log(result);
-
-        console.log(result.includes("win"));
-
-        if(result.includes("win")){
-            playerScore++;
-            console.log(`Player score: ${playerScore}`);
-        } else if (result.includes("lose")){
-            computerScore++;
-            console.log(`Computer score: ${computerScore}`);
-        }
+ //current rounds score
+ function currentRoundsScore(result){
+    console.log("Scoreboard");
+    console.log('-------------------------------');
+    // increase score on condition.
+    if(result.includes("win")){
+        playerScore++;
+    } else if (result.includes("lose")){
+        computerScore++;
     }
+    // dispaly the scores
+    console.log(`Player score: ${playerScore}`);
+    console.log(`Computer score: ${computerScore}`);
+ }
 
+//orchestrates the function that play the game
+function game(){
+    let result;
+    
+    // call play round x number of times:
+    playXNumberRounds(5);
+
+    //add spaceing:
+    console.log();
+
+    // call gameresult to display the games results
+    return gameResult();
+}
+
+// show the results of the game
+function gameResult(){
+    console.log("The game's results:")
+    console.log('------------------------');
     // report the winner based on the score
     if(playerScore > computerScore){
         return "you win";
@@ -91,6 +126,15 @@ function game(){
     } else {
         return "game is a tie";
     }
-
 }
+
+
+// keep track of the round number
+let round = 0;
+
+// keep track of score
+let playerScore = 0;
+let computerScore = 0;
+
+// starts the game by calling the game function.
 console.log(game());
