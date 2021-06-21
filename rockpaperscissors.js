@@ -8,67 +8,7 @@ function computerPlay() {
     return choices[choice];
 }
 
-//
- function playRound(playerSelection,computerSelection){
-     console.log(playerSelection);
-    //ignore usercase by putting to lower case
-    let playersMove = playerSelection.toLowerCase();
-
-    //for spacing the output of the rounds
-    console.log();
-
-    //show the round number and increment it by one
-    round++;
-    console.log(`round ${round}`)
-    //add decoration for output
-    console.log('-------------------------------');
-    // outputs the players and computers moves
-    console.log(`the player's move is ${playersMove}`);
-    console.log(`the computer's move is ${computerSelection}`);
-    // add spacing for output
-    console.log();
-
-    /*
-    win and lose conditions
-    paper:
-        paper > rock
-        paper < scissors
-    rock:
-        rock > scissors
-        rock < paper
-    scissors:
-        scissors > paper
-        scissors < rock
-     */
-
-    //call function to get the result of the round
-    return roundResult(playersMove, computerSelection);
- }
-
-//
- function roundResult(playersMove, computerSelection){
-    // check the result and return it
-    if(playersMove == computerSelection){
-        return "tie"
-    } else if (playersMove == 'paper' && computerSelection == 'rock') {
-        return "You win! Paper beats rock";
-    } else if (playersMove == 'paper' && computerSelection == 'scissors') {
-        return "You lose! Scissors cuts paper";
-    } else if (playersMove == 'rock' && computerSelection == 'scissors'){
-        return "You win! rock crushes Scissors";
-    } else if (playersMove == 'rock' && computerSelection == 'paper'){
-        return "You lose! paper beats rock!";
-    } else if (playersMove == 'scissors' && computerSelection == 'paper'){
-        return "You win! Scissors cuts paper";
-    } else if (playersMove == 'scissors' && computerSelection == 'rock'){
-        return "You lose! rock crushes Scissors";
-    }
- }
-
-
- // play round x number of times
- function playXNumberRounds(numberOfRounds){
-
+function userPlay() {
     /*
     possible states of prompt:
     1:
@@ -153,25 +93,86 @@ function computerPlay() {
         return false;
     }
 
-    
-    //check for user input errors and send fend back then repromts
+    return userInput;
+}
 
+//
+ function playRound(playerSelection,computerSelection){
+     console.log(playerSelection);
+     if (playerSelection == false){
+         return false;
+     }
+    //ignore usercase by putting to lower case
+    let playersMove = playerSelection.toLowerCase();
+
+    //for spacing the output of the rounds
+    console.log();
+
+    //show the round number and increment it by one
+    round++;
+    console.log(`round ${round}`)
+    //add decoration for output
+    console.log('-------------------------------');
+    // outputs the players and computers moves
+    console.log(`the player's move is ${playersMove}`);
+    console.log(`the computer's move is ${computerSelection}`);
+    // add spacing for output
+    console.log();
+
+    /*
+    win and lose conditions
+    paper:
+        paper > rock
+        paper < scissors
+    rock:
+        rock > scissors
+        rock < paper
+    scissors:
+        scissors > paper
+        scissors < rock
+     */
+
+    //call function to get the result of the round
+    return roundResult(playersMove, computerSelection);
+ }
+
+//
+ function roundResult(playersMove, computerSelection){
+    // check the result and return it
+    if(playersMove == computerSelection){
+        return "tie"
+    } else if (playersMove == 'paper' && computerSelection == 'rock') {
+        return "You win! Paper beats rock";
+    } else if (playersMove == 'paper' && computerSelection == 'scissors') {
+        return "You lose! Scissors cuts paper";
+    } else if (playersMove == 'rock' && computerSelection == 'scissors'){
+        return "You win! rock crushes Scissors";
+    } else if (playersMove == 'rock' && computerSelection == 'paper'){
+        return "You lose! paper beats rock!";
+    } else if (playersMove == 'scissors' && computerSelection == 'paper'){
+        return "You win! Scissors cuts paper";
+    } else if (playersMove == 'scissors' && computerSelection == 'rock'){
+        return "You lose! rock crushes Scissors";
+    }
+ }
+
+ // play round x number of times
+ function playXNumberRounds(numberOfRounds){
     for(let i = 0; i < numberOfRounds; i++){
         //console.log(i); check number of itterations
-
-        result = playRound(userInput,computerPlay());
+        result = playRound(userPlay(),computerPlay());
+        if(result == false) {
+            return false;
+        }
         // display the current rounds result
         console.log(`The result of round ${round}:`);
         console.log('-------------------------------');
         console.log(result);
         console.log();
-
         //scoring:
         currentRoundsScore(result);
-
         //end of round # i    
     }
-
  }
 
  //current rounds score
