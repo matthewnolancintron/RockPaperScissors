@@ -1,4 +1,3 @@
-//
 function computerPlay() {
     //randomly return either rock or paper or scisors
     // use console.log to make sure the function is working
@@ -11,6 +10,7 @@ function computerPlay() {
 
 //
  function playRound(playerSelection,computerSelection){
+     console.log(playerSelection);
     //ignore usercase by putting to lower case
     let playersMove = playerSelection.toLowerCase();
 
@@ -65,12 +65,102 @@ function computerPlay() {
     }
  }
 
+
  // play round x number of times
  function playXNumberRounds(numberOfRounds){
-    //
+
+    /*
+    possible states of prompt:
+    1:
+    When the user enters text in the input field and clicks the OK button,
+    text entered in the input field is returned.
+    
+    2:
+    If the user clicks OK without entering any text,
+     an empty string is returned.
+     
+    3:
+    If the user clicks the Cancel button,
+    this function returns null.
+        
+
+    based on the possible states need to handle each state accordingly:
+    1:
+    in the case of state 1 the text need to be checked if valid
+    and if not valide error needs to be sent to the console and
+    user reprompted for input with information as to the
+    type of information expected or just include that to being with and
+    show it again on reprompt
+
+    2:
+    reprompt the user for input
+
+    3:
+     (might wait to handle this type of error on the updated version with the gui)
+     not sure if I want to reprompt the user.
+     or
+     just display the game has been ended?
+    
+     */
+
+
+    
+    //error handling for user input/move
+    let userInput;
+    
+    // keep prompting user input until input is valid or null
+    while(userInput != 'rock' && userInput != 'paper' && userInput != "scissors" && userInput != 'game ended'){
+        // prompt user for input and store to variable
+       try {
+        userInput = prompt().toLowerCase();
+       } catch(error){
+           console.log("prompt has been closed");
+       }
+        
+
+    //test user's input for validation
+    switch (userInput){
+        // user pressed cancel on the prompt
+        case undefined:
+        // end game
+        // end loop by setting userInput to game ended
+        userInput = 'game ended';
+        break;
+        
+        // user pressed okay without entering move, input is invalid
+        case '':
+        // tell user to input move or cancel prompt to end game
+        console.log("input one of the following: rock, paper, scissors");
+        console.log("press cancle to end the game");
+        break;
+        
+        // input is equal to something other than the three moves,
+        // input is invalid, reprompt the user.
+        default:
+            console.log(userInput);
+            if(userInput != 'rock'&& userInput !='paper' && userInput != 'scissors'){
+                //reprompt user
+                console.log("try entering you move again");
+                console.log("input one of the following: rock, paper, scissors");
+                console.log("press cancle to end the game");
+            }
+        break;
+    }
+
+    }
+
+
+    if (userInput == 'game ended'){
+        return false;
+    }
+
+    
+    //check for user input errors and send fend back then repromts
+
     for(let i = 0; i < numberOfRounds; i++){
         //console.log(i); check number of itterations
-        result = playRound(prompt(),computerPlay());
+
+        result = playRound(userInput,computerPlay());
         // display the current rounds result
         console.log(`The result of round ${round}:`);
         console.log('-------------------------------');
@@ -105,13 +195,19 @@ function game(){
     let result;
     
     // call play round x number of times:
-    playXNumberRounds(5);
+    result = playXNumberRounds(5);
 
     //add spaceing:
     console.log();
 
     // call gameresult to display the games results
-    return gameResult();
+ 
+    if (result == false){
+        return 'game ended';
+    } else {
+        return gameResult();
+    }
+    
 }
 
 // show the results of the game
