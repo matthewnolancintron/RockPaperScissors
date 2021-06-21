@@ -110,23 +110,22 @@ function computerPlay() {
     
     // keep prompting user input until input is valid or null
     while(userInput != 'rock' && userInput != 'paper' && userInput != "scissors" && userInput != 'game ended'){
-        // prompt user for input and store to variable
+        //try to prompt user for input and store to variable
        try {
         userInput = prompt().toLowerCase();
        } catch(error){
+           console.log();
+           // user pressed cancel on the prompt
            console.log("prompt has been closed");
+           //console.log(`value:${userInput}`);
+            // end loop by setting userInput to game ended
+            userInput = 'game ended';
+            break;
        }
         
 
     //test user's input for validation
-    switch (userInput){
-        // user pressed cancel on the prompt
-        case undefined:
-        // end game
-        // end loop by setting userInput to game ended
-        userInput = 'game ended';
-        break;
-        
+    switch (userInput){        
         // user pressed okay without entering move, input is invalid
         case '':
         // tell user to input move or cancel prompt to end game
