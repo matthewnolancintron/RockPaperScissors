@@ -1,3 +1,20 @@
+/*
+    UI improvments and additions:
+
+    01: feature: play gain button
+    add a play again button to allow the game to be reinitiallized
+    at the end of a game allowing the player to play the game multiple times
+
+    02: history section and clean round up output
+    on each subsequent round clear up previous rounds output from the screen
+    and place it into a aside element or details element and place out of the center
+    in a collapsed or compact form called history or round history or game history or
+    previous rounds
+
+    03: restart game button
+    allows player to restart game before the game ends
+    */
+
 // select a random move for the computer and returns the move selected
 function computerPlay() {
     //randomly return either rock or paper or scisors
@@ -7,178 +24,114 @@ function computerPlay() {
     return choices[choice];
 }
 
-//prompts user and checks for vaild input responding accordingly
-function userPlay() {
-    //store player's move to check for validity and re-use where needed.
-    let userInput;
-    
-    // error handling for user input/move
-
-    // keep prompting user input until input is valid or null
-    while(userInput != 'rock' && userInput != 'paper' && userInput != "scissors" && userInput != 'game ended'){
-        //try to prompt user for input and store to variable
-       try {
-        userInput = prompt("rock, paper or scissors").toLowerCase();
-       } catch(error){
-           console.log();
-           // user pressed cancel on the prompt
-           console.log("prompt has been closed");
-           //console.log(`value:${userInput}`);
-            // end loop by setting userInput to game ended
-            userInput = 'game ended';
-            break;
-       }
-        
-
-    //test user's input for validation
-    switch (userInput){        
-        // user pressed okay without entering move, input is invalid
-        case '':
-        // tell user to input move or cancel prompt to end game
-        console.log("\ninput one of the following: rock, paper, scissors");
-        console.log("press cancle to end the game\n",);
-        break;
-        
-        // input is equal to something other than the three moves,
-        // input is invalid, reprompt the user.
-        default:
-            //console.log(userInput); // check input value.
-            if(userInput != 'rock'&& userInput !='paper' && userInput != 'scissors'){
-                //reprompt user
-                console.log("\ntry entering you move again");
-                console.log("input one of the following: rock, paper, scissors");
-                console.log("press cancle to end the game\n");
-            }
-        break;
-    }
-
-    }
-
-
-    // user closed the prompt.
-    if (userInput == 'game ended'){
-        // return false to trigger conditions in other(parent?) function
-        // that will stop the game.
-        return false;
-    }
-
-    // if the function makes it this far then return the player's move
-    return userInput;
-}
-
 // play a single round of rock paper scissors
  function playRound(playerSelection,computerSelection){
+
+    if(isGameEnded){
+        // current game's winner and lose has been declared
+        // exit the function and don't play anymore rounds.
+        return 0;
+    } else {
+        // game is still not over yet play the round
+
+        //ignore usercase by putting to lower case
+        let playersMove = playerSelection.toLowerCase();
+
+        let currentRoundSection = document.createElement('section');
+
+        //show the round number and increment it by one
+        round++;
+        let roundNumberHeader = document.createElement('h1');
+        roundNumberHeader.innerText = (`Round ${round}`);
+
+        let playerMoveMessage = document.createElement('p');
+        playerMoveMessage.innerText = `The player's move is ${playersMove}.`;
     
-    // if player selection is false then user closed the prompt end
-    // and trigger parent function end game condition by returning false 
-     if (playerSelection == false){
-         return false;
-     }
+        let computerMoveMessage = document.createElement('p');
+        computerMoveMessage.innerText = `The computer's move is ${computerSelection}.`;
 
-    //ignore usercase by putting to lower case
-    let playersMove = playerSelection.toLowerCase();
+        //round results
+        let roundResultSection = document.createElement('section');
 
-    //show the round number and increment it by one
-    round++;
-    console.log(`\nround ${round}`)
-    //add decoration for output
-    console.log('-------------------------------');
-    // outputs the players and computers moves
-    console.log(`the player's move is ${playersMove}`);
-    console.log(`the computer's move is ${computerSelection}\n`);
+        let roundResultHeader = document.createElement('h2');
+        roundResultHeader.innerText = `Round ${round} result`
 
-    //call function to get the result of the round
-    return roundResult(playersMove, computerSelection);
+        //call function to get the result of the round
+        let roundResultMessage = document.createElement('p');
+        roundResultMessage.innerText = roundResult(playersMove, computerSelection);
+
+        //
+        roundResultSection.appendChild(roundResultHeader);
+        roundResultSection.appendChild(roundResultMessage);
+
+        // call currentRoundScore to handle dom changes for round score.
+        let scoreBoard = currentRoundsScore(roundResult(playersMove, computerSelection));
+   
+        resultsDiv.appendChild(roundNumberHeader);
+        resultsDiv.appendChild(playerMoveMessage);
+        resultsDiv.appendChild(computerMoveMessage);
+        resultsDiv.appendChild(roundResultSection);
+        resultsDiv.appendChild(scoreBoard);
+       
+        //check if there is a winner
+        if(bestOfXrounds(5)){
+            //display the game's results
+            let gameResultSection = gameResult();
+            resultsDiv.appendChild(gameResultSection);
+        }
+
+        return roundResult(playersMove, computerSelection);
+    }
+
  }
 
 // compute the result and return a message based on the game state.
  function roundResult(playersMove, computerSelection){
-
     if(playersMove == computerSelection){
-        return "tie"
+        return `round ${round} ends in a tie`
     } else if (playersMove == 'paper' && computerSelection == 'rock') {
-        return "You win! Paper beats rock";
+        return `You win round ${round}, paper beats rock.`;
     } else if (playersMove == 'paper' && computerSelection == 'scissors') {
-        return "You lose! Scissors cuts paper";
+        return `You lose round ${round}, scissors cuts paper.`;
     } else if (playersMove == 'rock' && computerSelection == 'scissors'){
-        return "You win! rock crushes Scissors";
+        return `You win round ${round}, rock crushes scissors`;
     } else if (playersMove == 'rock' && computerSelection == 'paper'){
-        return "You lose! paper beats rock!";
+        return `You lose round ${round}, paper beats rock.`;
     } else if (playersMove == 'scissors' && computerSelection == 'paper'){
-        return "You win! Scissors cuts paper";
+        return `You win round ${round}, scissors cuts paper.`;
     } else if (playersMove == 'scissors' && computerSelection == 'rock'){
-        return "You lose! rock crushes Scissors";
-    }
- }
-
- // play round x number of times
- function playXNumberRounds(numberOfRounds){
-    // for keeptrack if there is an "early winner"
-    let isWinnerYet;
-
-    // iterate through the rounds
-    for(let i = 0; i < numberOfRounds; i++){
-        //console.log(i); check number of itterations
-        result = playRound(userPlay(),computerPlay());
-
-        // user closed the prompt.
-        // return false to exit current fuction and
-        // trigger condition in parent function
-        if(result == false) {
-            return false;
-        }
-
-        // display the current rounds result
-        console.log(`\nThe result of round ${round}:`);
-        console.log('-------------------------------');
-        console.log(result,'\n');
-
-        //scoring:
-        currentRoundsScore(result);
-        //end of round # i
-
-        // call best of x rounds to see if there is a winner
-        // before the maximum number of rounds has been played
-        // store return value into a varible will be boolean
-        // use that boolean to trigger condition that can
-        // call another function for declaring the winner
-        // 
-        isWinnerYet = bestOfXrounds(numberOfRounds);
-
-        // if iswinneryet is true then declare the winner
-        // if not then final round is to be played
-       // handling ending game early:
-       // game should be wrapped up in certain way and end abruptly
-       // show score and most likely call game result early
-       if (isWinnerYet){
-            /*
-                return a value to game function to get the game result
-                any value other than false will do
-            */
-           return true;
-       }
-
-
+        return `You lose round ${round}, rock crushes scissors`;
     }
  }
 
  //current rounds score
  function currentRoundsScore(result){
-    console.log("\nScoreboard");
-    console.log('-------------------------------');
+    let scoreBoard = document.createElement('section');
+
+    let scoreHeader = document.createElement('h1');
+    scoreHeader.innerText = `ScoreBoard as of round ${round}`;
     // increase score on condition.
     if(result.includes("win")){
         playerScore++;
     } else if (result.includes("lose")){
         computerScore++;
     }
-    // dispaly the scores
-    console.log(`Player score: ${playerScore}`);
-    console.log(`Computer score: ${computerScore}`);
- }
+
+    let playerScoreMessage = document.createElement('p');
+    playerScoreMessage.innerText = `Player score: ${playerScore}`; 
+    
+    let computerScoreMessage = document.createElement('p');
+    computerScoreMessage.innerText = `Computer score: ${computerScore}`;
+
+    scoreBoard.appendChild(scoreHeader);
+    scoreBoard.appendChild(playerScoreMessage);
+    scoreBoard.appendChild(computerScoreMessage);
+
+    return scoreBoard;
+    }
 
 
- //
+ //check if there is a winner before the max number of rounds are played
  function bestOfXrounds(numberOfRounds){
         /*
         "algorithm" to tell when player is delcared early:
@@ -237,36 +190,30 @@ function userPlay() {
 
  }
 
-//orchestrates the function that play the game
-function game(rounds){
-    let result;
-    
-    // call play round x number of times:
-    result = playXNumberRounds(rounds);
-
-    // user closed/canceled the prompt if result if false
-    if (result == false){
-        // user close the prompt end the game
-        return 'game ended';
-    } else {
-        //call gameresult to display the games results 
-        return gameResult();
-    }
-    
-}
 
 // show the results of the game
 function gameResult(){
-    console.log("\nThe game's results:")
-    console.log('------------------------');
+    let gameResultSection = document.createElement('section');
+
+    let gameResultHeader = document.createElement('h1');
+    gameResultHeader.innerText = "The game's results";
+    
+    let gameResultMessage = document.createElement('p');
     // report the winner based on the score
     if(playerScore > computerScore){
-        return "you win";
+        gameResultMessage.innerText = "You win!";
     } else if (playerScore < computerScore) {
-        return "you lose";
+        gameResultMessage.innerText = "you lose!";
     } else {
-        return "game is a tie";
+        gameResultMessage.innerText = "game is a tie!";
     }
+
+    gameResultSection.appendChild(gameResultHeader);
+    gameResultSection.appendChild(gameResultMessage);
+
+    isGameEnded = true;
+
+    return gameResultSection;
 }
 
 
@@ -277,5 +224,15 @@ let round = 0;
 let playerScore = 0;
 let computerScore = 0;
 
-// starts the game by calling the game function.
-console.log(game(5));
+//check if the current game has eneded
+let isGameEnded = false;
+
+const selectionButtons = document.querySelectorAll('.playerSelection');
+
+selectionButtons.forEach(element => {
+    element.addEventListener('click', () => {
+        playRound(element.textContent, computerPlay());
+    });
+});
+
+const resultsDiv = document.querySelector('#results');
